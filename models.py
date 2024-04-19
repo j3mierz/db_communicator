@@ -25,10 +25,22 @@ class Users:
         cur.close()
         conn.close()
 
-    def load_user_by_username(self, username):
+    @staticmethod
+    def load_user_by_username(username):
         conn = connect_db()
         cur = conn.cursor()
-        cur.execute(f"select * from users where username like '{username}'")
+        cur.execute(f"SELECT * FROM users WHERE username LIKE '{username}'")
+        result = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return result
+
+    @staticmethod
+    def load_user_by_id(user_id):
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute(f"SELECT * FROM users WHERE id = {int(user_id)}")
         result = cur.fetchall()
         conn.commit()
         cur.close()
@@ -37,4 +49,5 @@ class Users:
 
 
 a = Users()
-print(a.load_user_by_username('Paweu'))
+a.new_user_to_db()
+print(a.load_user_by_id(4))
