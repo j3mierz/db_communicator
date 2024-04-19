@@ -58,6 +58,17 @@ class Users:
         conn.close()
         return result
 
+    @staticmethod
+    def delete_user_by_id(user_id):
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute(f"DELETE FROM users WHERE id = {int(user_id)};")
+        conn.commit()
+        cur.close()
+        conn.close()
+
 
 a = Users()
+print(a.load_all_users())
+a.delete_user_by_id(7)
 print(a.load_all_users())
