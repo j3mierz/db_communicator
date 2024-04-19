@@ -37,6 +37,17 @@ class Users:
         return result
 
     @staticmethod
+    def change_user(username, password):
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute(f"UPDATE users SET username = '{username}', password = '{password}' WHERE username like '{username}'; ")
+        conn.commit()
+        cur.close()
+        conn.close()
+
+
+
+    @staticmethod
     def load_user_by_id(user_id):
         conn = connect_db()
         cur = conn.cursor()
@@ -67,6 +78,7 @@ class Users:
         cur.close()
         conn.close()
 
+
 class Messages:
     def __init__(self, from_id="", to_id="", text=""):
         self._id = -1
@@ -79,28 +91,25 @@ class Messages:
     def id(self):
         return self._id
 
-    def save_to_db(self, from_id, to_id, text):
+    def save_to_db(self):
         conn = connect_db()
         cur = conn.cursor()
-        cur.execute(f"INSERT INTO messages(from_id, to_id, text) VALUES ('{from_id}', '{to_id}', '{text}') RETURNING id")
+        cur.execute(
+            f"INSERT INTO messages(from_id, to_id, text) VALUES ('{self.from_id}', '{self.to_id}', '{self.text}') RETURNING id")
         self._id = cur.fetchone()[0]
         conn.commit()
         cur.close()
         conn.close()
 
     @staticmethod
-    def load_all_messages():
+    def load_all_messages(id_us):
         conn = connect_db()
         cur = conn.cursor()
-        cur.execute(f"SELECT * FROM messages")
+        cur.execute(f"SELECT * FROM messages where to_id = {id_us}")
         result = cur.fetchall()
         conn.commit()
         cur.close()
         conn.close()
         return result
 
-a = Users()
-print(a.load_all_users())
-b = Messages()
-b.save_to_db(4,6, "Ja też się bałem ciemności, aż pewnego… Chociaż nie. Ja wciąż się boję ciemności.")
-print(b.load_all_messages())
+
