@@ -47,7 +47,17 @@ class Users:
         conn.close()
         return result
 
+    @staticmethod
+    def load_all_users():
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute(f"SELECT * FROM users")
+        result = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return result
+
 
 a = Users()
-a.new_user_to_db()
-print(a.load_user_by_id(4))
+print(a.load_all_users())
