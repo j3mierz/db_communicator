@@ -69,7 +69,7 @@ while command == "q":
     if command == "4":
         current_user = Users.load_all_users()
         for i in current_user:
-            print(i)
+            print("id: ", i[0], "username:", i[1])
         command = "q"
 
     while command == "5":
