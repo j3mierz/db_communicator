@@ -67,8 +67,40 @@ class Users:
         cur.close()
         conn.close()
 
+class Messages:
+    def __init__(self, from_id="", to_id="", text=""):
+        self._id = -1
+        self.from_id = from_id
+        self.to_id = to_id
+        self.text = text
+        self.creation_time = None
+
+    @property
+    def id(self):
+        return self._id
+
+    def save_to_db(self, from_id, to_id, text):
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute(f"INSERT INTO messages(from_id, to_id, text) VALUES ('{from_id}', '{to_id}', '{text}') RETURNING id")
+        self._id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    @staticmethod
+    def load_all_messages():
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute(f"SELECT * FROM messages")
+        result = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return result
 
 a = Users()
 print(a.load_all_users())
-a.delete_user_by_id(7)
-print(a.load_all_users())
+b = Messages()
+b.save_to_db(4,6, "Ja też się bałem ciemności, aż pewnego… Chociaż nie. Ja wciąż się boję ciemności.")
+print(b.load_all_messages())
